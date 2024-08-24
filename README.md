@@ -95,3 +95,15 @@ from pyspark.sql import SparkSession
 spark = SparkSession.builder.appName("Doc_reader").getOrCreate()
 
 df = spark.read.text("DSA-For-Data-Engineer.txt")
+'''
+
+## Data Transformation
+
+### Extracting Topics and Questions
+Transforming text data to extract topics and questions into separate columns.
+
+```python
+from pyspark.sql.functions import when, col, rlike
+
+transformed_df = df.withColumn("Topic", when(col("value").rlike(r"^[ A-Z]"), col("value")).otherwise(None)) \
+                    .withColumn("Questions", when(col("value").rlike(r"^\d+\."), col("value")).otherwise(None))
