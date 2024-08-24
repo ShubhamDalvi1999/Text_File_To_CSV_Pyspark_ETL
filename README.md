@@ -154,4 +154,8 @@ transformed_df = transformed_df.fillna("")
 ```python
 transformed_df.write.csv('DSA_practice.csv', header=True, mode='overwrite')
 ```
-
+## Usage Instructions
+1. Ensure PySpark and other dependencies are installed.
+2. Place your text data file in the appropriate directory.
+3. Run the provided code step-by-step in a Jupyter notebook or a PySpark environment.
+4. Review the generated CSV file and EDA outputs for insights.
