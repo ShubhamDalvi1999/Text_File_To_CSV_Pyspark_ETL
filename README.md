@@ -95,7 +95,7 @@ from pyspark.sql import SparkSession
 spark = SparkSession.builder.appName("Doc_reader").getOrCreate()
 
 df = spark.read.text("DSA-For-Data-Engineer.txt")
-'''
+```
 
 ## Data Transformation
 
@@ -107,3 +107,51 @@ from pyspark.sql.functions import when, col, rlike
 
 transformed_df = df.withColumn("Topic", when(col("value").rlike(r"^[ A-Z]"), col("value")).otherwise(None)) \
                     .withColumn("Questions", when(col("value").rlike(r"^\d+\."), col("value")).otherwise(None))
+```
+## Exploratory Data Analysis (EDA)
+### Summary Statistics
+Generating summary statistics to understand the data better.
+
+```python
+from pyspark.sql.functions import isnan, count
+
+eda_df = transformed_df.select([count(col(c)).alias(c) for c in transformed_df.columns])
+eda_df.show()
+```
+
+## Null Value Analysis
+### Calculating and displaying the percentage of null values in each column.
+
+```python
+eda_null_df = transformed_df.select([count(when(isnan(c) | col(c).isNull(), c)).alias(f"{c}_null_val") for c in transformed_df.columns])
+eda_null_df.show()
+
+union_df = eda_df.union(eda_null_df)
+union_df.show()
+
+total_rows_count = transformed_df.count()
+null_percentages = []
+
+for c in transformed_df.columns:
+    null_count = transformed_df.filter(col(c).isNull() | isnan(c)).count()
+    null_percent = (null_count / total_rows_count) * 100
+    null_percentages.append((c, round(null_percent, 3)))
+
+percent_df = spark.createDataFrame(null_percentages, ["Column", "Null_Percentages"])
+percent_df.show()
+```
+## Cleaning and Saving Results
+### Cleaning Data
+Dropping the original column and replacing None values with empty strings.
+
+```python
+transformed_df = transformed_df.drop(col("value"))
+transformed_df = transformed_df.fillna("")
+```
+## Saving the Cleaned Data
+### Saving the cleaned DataFrame to a CSV file.
+
+```python
+transformed_df.write.csv('DSA_practice.csv', header=True, mode='overwrite')
+```
+
