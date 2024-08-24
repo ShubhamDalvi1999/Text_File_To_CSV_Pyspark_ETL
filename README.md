@@ -159,3 +159,6 @@ transformed_df.write.csv('DSA_practice.csv', header=True, mode='overwrite')
 2. Place your text data file in the appropriate directory.
 3. Run the provided code step-by-step in a Jupyter notebook or a PySpark environment.
 4. Review the generated CSV file and EDA outputs for insights.
+
+
+This `README.md` file provides a comprehensive overview of your project, detailing the data transformation, EDA, and cleaning steps along with usage instructions.
